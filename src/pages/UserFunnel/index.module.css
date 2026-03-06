@@ -1,0 +1,290 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 页面结论区 */
+.conclusion {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 14px 20px;
+  font-size: 14px;
+  color: #1a202c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeInUp 0.35s ease-out both;
+}
+
+.conclusionIcon {
+  font-size: 16px;
+}
+
+/* KPI 卡片区 */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.kpiGrid > * {
+  animation: fadeInUp 0.35s ease-out both;
+}
+
+.kpiGrid > *:nth-child(1) { animation-delay: 0ms; }
+.kpiGrid > *:nth-child(2) { animation-delay: 30ms; }
+.kpiGrid > *:nth-child(3) { animation-delay: 60ms; }
+.kpiGrid > *:nth-child(4) { animation-delay: 90ms; }
+.kpiGrid > *:nth-child(5) { animation-delay: 120ms; }
+
+/* 维度筛选器 */
+.localFilter {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: fadeInUp 0.35s ease-out 0.15s both;
+}
+
+.filterLabel {
+  font-size: 13px;
+  color: #595959;
+  white-space: nowrap;
+}
+
+/* 通用模块卡片 */
+.moduleCard {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+  animation: fadeInUp 0.35s ease-out 0.3s both;
+}
+
+.moduleTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 12px;
+}
+
+/* Insight Box */
+.insightBox {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: #f6f8fb;
+  border-left: 3px solid var(--color-primary);
+  font-size: 12px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.insightBox.warning {
+  border-left-color: var(--color-warning);
+  background: #fffbf0;
+}
+
+.insightBox.critical {
+  border-left-color: var(--color-danger);
+  background: #fff5f5;
+}
+
+.insightLabel {
+  font-weight: 600;
+  color: #2d3748;
+  margin-right: 4px;
+}
+
+/* 模块B 并列漏斗 */
+.dualFunnel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.funnelColumn {
+  min-width: 0;
+}
+
+.funnelColumnTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #595959;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* 漏斗环节详情 */
+.funnelDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.funnelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #4a5568;
+}
+
+.funnelRow:hover {
+  background: #f7fafc;
+}
+
+.funnelStage {
+  font-weight: 500;
+  min-width: 64px;
+}
+
+.funnelCount {
+  font-variant-numeric: tabular-nums;
+}
+
+.funnelRate {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.funnelChange {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.highlight {
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+}
+
+/* 模块C 双栏 */
+.dualChart {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* 模块D 零点歌画像 */
+.profileGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.profileItem {
+  background: #f7fafc;
+  border-radius: 6px;
+  padding: 14px;
+}
+
+.profileLabel {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-bottom: 6px;
+}
+
+.profileValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a202c;
+  font-variant-numeric: tabular-nums;
+}
+
+.profileSub {
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-top: 2px;
+}
+
+/* 模块E 异常链路 */
+.anomalyFlow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
+}
+
+.anomalyNode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.anomalyNode.normal {
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #389e0d;
+}
+
+.anomalyNode.abnormal {
+  background: #fff2e8;
+  border: 1px solid #ffbb96;
+  color: #d4380d;
+}
+
+.anomalyNode.root_cause {
+  background: #fff1f0;
+  border: 1px solid #ffa39e;
+  color: #cf1322;
+  font-weight: 600;
+}
+
+.anomalyValue {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.anomalyConnector {
+  width: 2px;
+  height: 12px;
+  background: #d9d9d9;
+  margin-left: 24px;
+}
+
+.anomalyChildren {
+  padding-left: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* 退出页面分布表 */
+.exitTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.exitTable th {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #8c8c8c;
+  font-weight: 500;
+}
+
+.exitTable td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #fafafa;
+  color: #1a202c;
+}
+
+.exitBar {
+  display: inline-block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-primary);
+}
