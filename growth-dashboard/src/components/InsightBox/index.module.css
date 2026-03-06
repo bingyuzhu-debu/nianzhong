@@ -1,0 +1,65 @@
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 12px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.item {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+  background: #fafafa;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.item:hover {
+  background: #f0f0f0;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.dimension {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.description {
+  font-size: 12px;
+  color: #595959;
+  line-height: 1.5;
+}
