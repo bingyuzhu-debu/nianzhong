@@ -1,0 +1,218 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 页面结论区 */
+.conclusion {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 14px 20px;
+  font-size: 14px;
+  color: #1a202c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeInUp 0.35s ease-out both;
+}
+
+.conclusionIcon {
+  font-size: 16px;
+}
+
+/* KPI 卡片区 */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.kpiGrid > * {
+  animation: fadeInUp 0.35s ease-out both;
+}
+
+.kpiGrid > *:nth-child(1) { animation-delay: 0ms; }
+.kpiGrid > *:nth-child(2) { animation-delay: 30ms; }
+.kpiGrid > *:nth-child(3) { animation-delay: 60ms; }
+.kpiGrid > *:nth-child(4) { animation-delay: 90ms; }
+.kpiGrid > *:nth-child(5) { animation-delay: 120ms; }
+
+/* 维度筛选器 */
+.localFilter {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.35s ease-out 0.15s both;
+}
+
+.filterLabel {
+  font-size: 13px;
+  color: #595959;
+  white-space: nowrap;
+}
+
+/* 通用模块卡片 */
+.moduleCard {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+  animation: fadeInUp 0.35s ease-out 0.3s both;
+}
+
+.moduleTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 12px;
+}
+
+/* Insight Box */
+.insightBox {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: #f6f8fb;
+  border-left: 3px solid var(--color-primary);
+  font-size: 12px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.insightBox.warning {
+  border-left-color: var(--color-warning);
+  background: #fffbf0;
+}
+
+.insightBox.critical {
+  border-left-color: var(--color-danger);
+  background: #fff5f5;
+}
+
+.insightLabel {
+  font-weight: 600;
+  color: #2d3748;
+  margin-right: 4px;
+}
+
+/* 双栏布局 */
+.dualChart {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.chartSubTitle {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-bottom: 4px;
+}
+
+/* 表格 */
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+.dataTable th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e8e8e8;
+  color: #8c8c8c;
+  font-weight: 500;
+  background: #fafafa;
+}
+
+.dataTable td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f5f5f5;
+  color: #1a202c;
+}
+
+.dataTable tr:hover td {
+  background: #f7fafc;
+}
+
+.dataTable .numCell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.positive {
+  color: #38A169;
+}
+
+.negative {
+  color: #E53E3E;
+}
+
+/* 模块F 异常链路 */
+.anomalyFlow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
+}
+
+.anomalyNode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.anomalyNode.normal {
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #389e0d;
+}
+
+.anomalyNode.abnormal {
+  background: #fff2e8;
+  border: 1px solid #ffbb96;
+  color: #d4380d;
+}
+
+.anomalyNode.root_cause {
+  background: #fff1f0;
+  border: 1px solid #ffa39e;
+  color: #cf1322;
+  font-weight: 600;
+}
+
+.anomalyValue {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.anomalyConnector {
+  width: 2px;
+  height: 12px;
+  background: #d9d9d9;
+  margin-left: 24px;
+}
+
+.anomalyChildren {
+  padding-left: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* 进度条样式 */
+.shareBar {
+  display: inline-block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-primary);
+}
