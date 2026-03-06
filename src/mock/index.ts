@@ -48,6 +48,14 @@ export type {
   RevenueUserType,
   PackageCategory,
   PaymentChannel,
+  RevenueTrendPoint as RevenueSourceTrendPoint,
+  PackageRow,
+  UnitPriceTrendPoint,
+  ScatterPoint,
+  PaymentChannelRow,
+  RefundTrendPoint,
+  RefundReasonRow,
+  RefundPackageRow,
   RevenueAnomalyNode,
 } from './revenueStructure';
 export {
