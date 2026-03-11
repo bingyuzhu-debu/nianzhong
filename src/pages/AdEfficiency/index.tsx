@@ -21,8 +21,11 @@ import {
   vipTrendData,
   vipRenewalData,
   adAnomalyTree,
+  arpuByStore,
+  arpuByRegion,
+  arpuByDeviceType,
 } from '../../mock';
-import type { AdPlacement, AdAnomalyNode } from '../../mock';
+import type { AdPlacement, AdAnomalyNode, ArpuAttribution } from '../../mock';
 import type { FilterState } from '../../types';
 import { formatNumber, formatPercent, formatCurrency } from '../../utils/format';
 import styles from './index.module.css';
@@ -103,6 +106,9 @@ export default function AdEfficiency() {
 
       {/* 模块D：VIP 用户广告打扰分析 */}
       <VipDisturbModule />
+
+      {/* 模块E.5：ARPU 归因分析 */}
+      <ArpuAttributionModule />
 
       {/* 模块E：异常定位链路 */}
       {isAbnormal && <AnomalyModule />}
@@ -670,6 +676,138 @@ function VipDisturbModule() {
         上升趋势明显。同时 VIP 续费率从 78% 下降至 65%，广告曝光量与续费率呈负相关。
         建议对 VIP 用户实施广告频控策略，将日均曝光控制在 3 次以内，
         以降低打扰度、保护续费率。
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   模块 E.5：ARPU 归因分析
+   ============================================================ */
+function ArpuAttributionModule() {
+  const [dimension, setDimension] = useState<string>('门店类型');
+
+  const dataMap: Record<string, ArpuAttribution[]> = {
+    '门店类型': arpuByStore,
+    '区域': arpuByRegion,
+    '设备型号': arpuByDeviceType,
+  };
+
+  const currentData = dataMap[dimension];
+
+  const barOption: echarts.EChartsCoreOption = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(255,255,255,0.96)',
+      borderColor: '#e8e8e8',
+      textStyle: { color: '#333', fontSize: 12 },
+      formatter: (params: { name: string; value: number }[]) => {
+        const p = params[0];
+        const item = currentData.find(d => d.segment === p.name);
+        if (!item) return '';
+        return `${p.name}<br/>ARPU：¥${item.arpu}<br/>用户数：${formatNumber(item.userCount)}<br/>收入贡献：${formatPercent(item.revenueContribution)}<br/>环比：${(item.changeRate * 100).toFixed(1)}%`;
+      },
+    },
+    grid: { top: 20, right: 60, bottom: 24, left: 80 },
+    xAxis: {
+      type: 'value',
+      name: 'ARPU (¥)',
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
+    },
+    yAxis: {
+      type: 'category',
+      data: currentData.map(d => d.segment).reverse(),
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { fontSize: 11, color: '#4a5568' },
+    },
+    series: [{
+      type: 'bar',
+      data: currentData.map(d => ({
+        value: d.arpu,
+        itemStyle: {
+          color: d.changeRate >= 0 ? '#38A169' : '#E53E3E',
+          borderRadius: [0, 4, 4, 0],
+        },
+      })).reverse(),
+      barMaxWidth: 24,
+      label: {
+        show: true,
+        position: 'right',
+        formatter: (params: { value: number }) => '¥' + params.value.toFixed(2),
+        fontSize: 11,
+        color: '#595959',
+      },
+    }],
+  };
+
+  return (
+    <div className={styles.moduleCard}>
+      <div className={styles.moduleTitle} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        ARPU 归因分析
+        <Select
+          size="small"
+          value={dimension}
+          onChange={setDimension}
+          style={{ width: 120 }}
+          options={[
+            { label: '门店类型', value: '门店类型' },
+            { label: '区域', value: '区域' },
+            { label: '设备型号', value: '设备型号' },
+          ]}
+        />
+      </div>
+      <div className={styles.dualChart || ''} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div>
+          <ReactEChartsCore
+            echarts={echarts}
+            option={barOption}
+            style={{ height: 260 }}
+            opts={{ renderer: 'canvas' }}
+            notMerge
+          />
+        </div>
+        <div>
+          <table className={styles.dataTable || ''} style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid #e8e8e8' }}>
+                <th style={{ padding: '8px 12px', textAlign: 'left', color: '#8c8c8c', fontWeight: 500 }}>{dimension}</th>
+                <th style={{ padding: '8px 12px', textAlign: 'right', color: '#8c8c8c', fontWeight: 500 }}>ARPU</th>
+                <th style={{ padding: '8px 12px', textAlign: 'right', color: '#8c8c8c', fontWeight: 500 }}>用户数</th>
+                <th style={{ padding: '8px 12px', textAlign: 'right', color: '#8c8c8c', fontWeight: 500 }}>收入占比</th>
+                <th style={{ padding: '8px 12px', textAlign: 'right', color: '#8c8c8c', fontWeight: 500 }}>环比</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentData.map((row) => (
+                <tr key={row.segment} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                  <td style={{ padding: '8px 12px', fontWeight: 500 }}>{row.segment}</td>
+                  <td style={{ padding: '8px 12px', textAlign: 'right' }}>¥{row.arpu.toFixed(2)}</td>
+                  <td style={{ padding: '8px 12px', textAlign: 'right' }}>{formatNumber(row.userCount)}</td>
+                  <td style={{ padding: '8px 12px', textAlign: 'right' }}>{formatPercent(row.revenueContribution)}</td>
+                  <td style={{ padding: '8px 12px', textAlign: 'right', color: row.changeRate >= 0 ? '#38A169' : '#E53E3E', fontWeight: 600 }}>
+                    {(row.changeRate * 100).toFixed(1)}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style={{
+        background: '#f7fafc',
+        borderRadius: 6,
+        padding: '10px 14px',
+        marginTop: 16,
+        fontSize: 12,
+        color: '#4a5568',
+        borderLeft: '3px solid #3182CE',
+      }}>
+        <span style={{ fontWeight: 600, color: '#2d3748' }}>洞察：</span>{' '}
+        {dimension === '门店类型' && '雷客 ARPU 最高（¥1.35）但环比下降 12%，是 ARPU 整体下滑的主要拖累。夜总会 ARPU ¥2.10 且逆势增长 3%，是高价值场景。量贩 KTV 用户基数最大但 ARPU 仅 ¥0.95，提升空间大。'}
+        {dimension === '区域' && '华东 ARPU 最高（¥1.35），华北下降最严重（-10%）。区域差异与门店类型分布相关——华北雷客占比高，受雷客 ARPU 下滑影响更大。'}
+        {dimension === '设备型号' && 'V20 Pro ARPU 最高（¥1.52）且逆势增长 5%，新机型广告效果更好。V10 ARPU 最低且下降 12%，建议考虑减少低效机型的广告投放或升级固件。'}
       </div>
     </div>
   );

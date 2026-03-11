@@ -336,3 +336,35 @@ export const adAnomalyTree: AdAnomalyNode = {
     },
   ],
 };
+
+// ============ ARPU 归因分析 ============
+export interface ArpuAttribution {
+  dimension: string;
+  segment: string;
+  arpu: number;
+  userCount: number;
+  revenueContribution: number;
+  changeRate: number;
+}
+
+export const arpuByStore: ArpuAttribution[] = [
+  { dimension: '门店类型', segment: '量贩KTV', arpu: 0.95, userCount: 562000, revenueContribution: 0.42, changeRate: -0.05 },
+  { dimension: '门店类型', segment: '雷客', arpu: 1.35, userCount: 385000, revenueContribution: 0.32, changeRate: -0.12 },
+  { dimension: '门店类型', segment: '夜总会', arpu: 2.10, userCount: 198000, revenueContribution: 0.18, changeRate: 0.03 },
+  { dimension: '门店类型', segment: '酒吧', arpu: 0.78, userCount: 138400, revenueContribution: 0.08, changeRate: -0.08 },
+];
+
+export const arpuByRegion: ArpuAttribution[] = [
+  { dimension: '区域', segment: '华东', arpu: 1.35, userCount: 410000, revenueContribution: 0.35, changeRate: -0.06 },
+  { dimension: '区域', segment: '华南', arpu: 1.28, userCount: 320000, revenueContribution: 0.26, changeRate: -0.03 },
+  { dimension: '区域', segment: '华北', arpu: 1.05, userCount: 280000, revenueContribution: 0.19, changeRate: -0.10 },
+  { dimension: '区域', segment: '西南', arpu: 0.92, userCount: 150000, revenueContribution: 0.09, changeRate: 0.02 },
+  { dimension: '区域', segment: '其他', arpu: 0.85, userCount: 123400, revenueContribution: 0.11, changeRate: -0.04 },
+];
+
+export const arpuByDeviceType: ArpuAttribution[] = [
+  { dimension: '设备型号', segment: 'V20 Pro', arpu: 1.52, userCount: 285000, revenueContribution: 0.30, changeRate: 0.05 },
+  { dimension: '设备型号', segment: 'V20', arpu: 1.18, userCount: 365000, revenueContribution: 0.30, changeRate: -0.08 },
+  { dimension: '设备型号', segment: 'V10', arpu: 0.95, userCount: 310000, revenueContribution: 0.20, changeRate: -0.12 },
+  { dimension: '设备型号', segment: '其他', arpu: 0.82, userCount: 323400, revenueContribution: 0.20, changeRate: -0.06 },
+];

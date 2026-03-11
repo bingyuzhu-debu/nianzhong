@@ -396,3 +396,49 @@ export const revenueAnomalyTree: RevenueAnomalyNode = {
 /* ========== 支付入口列表 ========== */
 
 export const PAYMENT_CHANNELS: PaymentChannel[] = ['全部', '扫码支付', '微信H5', '小程序', 'APP内购', '公众号'];
+
+// ============ 付费时段热力图 ============
+export interface PaymentHourData {
+  hour: number;
+  dayOfWeek: number;
+  count: number;
+}
+
+export const paymentHourData: PaymentHourData[] = (() => {
+  const data: PaymentHourData[] = [];
+  for (let day = 0; day < 7; day++) {
+    for (let hour = 0; hour < 24; hour++) {
+      const isWeekend = day === 0 || day === 6;
+      let base = 100;
+      if (hour >= 20 && hour <= 23) base = isWeekend ? 800 : 600;
+      else if (hour >= 18 && hour < 20) base = isWeekend ? 500 : 400;
+      else if (hour >= 14 && hour < 18) base = isWeekend ? 350 : 200;
+      else if (hour >= 10 && hour < 14) base = isWeekend ? 250 : 150;
+      else if (hour >= 0 && hour < 3) base = isWeekend ? 300 : 150;
+      else base = 50;
+      const count = Math.round(base * (0.8 + Math.random() * 0.4));
+      data.push({ hour, dayOfWeek: day, count });
+    }
+  }
+  return data;
+})();
+
+// ============ 转化触点数据 ============
+export interface ConversionTouchpoint {
+  touchpoint: string;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+  revenue: number;
+  conversionRate: number;
+  revenueShare: number;
+}
+
+export const conversionTouchpoints: ConversionTouchpoint[] = [
+  { touchpoint: '开屏弹窗', impressions: 892000, clicks: 178400, conversions: 35680, revenue: 428160, conversionRate: 0.040, revenueShare: 0.298 },
+  { touchpoint: '歌曲结束弹窗', impressions: 645000, clicks: 167700, conversions: 32250, revenue: 419250, conversionRate: 0.050, revenueShare: 0.292 },
+  { touchpoint: '特效/礼物弹窗', impressions: 423000, clicks: 80370, conversions: 16920, revenue: 236880, conversionRate: 0.040, revenueShare: 0.165 },
+  { touchpoint: '商品详情页', impressions: 312000, clicks: 74880, conversions: 18720, revenue: 205920, conversionRate: 0.060, revenueShare: 0.143 },
+  { touchpoint: '个人中心入口', impressions: 178000, clicks: 23140, conversions: 5340, revenue: 74760, conversionRate: 0.030, revenueShare: 0.052 },
+  { touchpoint: '消息推送', impressions: 534000, clicks: 37380, conversions: 5340, revenue: 69420, conversionRate: 0.010, revenueShare: 0.048 },
+];

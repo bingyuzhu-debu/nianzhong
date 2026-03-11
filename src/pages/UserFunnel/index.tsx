@@ -21,6 +21,8 @@ import {
   funnelTrendData,
   zeroSongProfile,
   funnelAnomalyTree,
+  songCountDistribution,
+  songEntryTop10,
 } from '../../mock';
 import type { UserType, FunnelNode, FunnelAnomalyNode } from '../../mock';
 import type { FilterState } from '../../types';
@@ -112,7 +114,13 @@ export default function UserFunnel() {
       {/* 模块D：零点歌用户分析 */}
       <ZeroSongModule />
 
-      {/* 模块E：异常定位链路 */}
+      {/* 模块E：点歌数量分布 */}
+      <SongCountDistributionModule />
+
+      {/* 模块F：点歌入口 Top10 */}
+      <SongEntryTop10Module />
+
+      {/* 模块G：异常定位链路 */}
       <AnomalyModule />
     </div>
   );
@@ -594,7 +602,153 @@ function ZeroSongModule() {
 }
 
 /* ============================================================
-   模块 E：异常定位链路
+   模块 E：点歌数量分布
+   ============================================================ */
+function SongCountDistributionModule() {
+  const barOption: echarts.EChartsCoreOption = {
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(255,255,255,0.96)',
+      borderColor: '#e8e8e8',
+      textStyle: { color: '#333', fontSize: 12 },
+      formatter: (params: { name: string; value: number; data: { ratio: number } }[]) => {
+        const p = params[0];
+        return `${p.name}<br/>用户数：${formatNumber(p.value)}<br/>占比：${formatPercent(p.data.ratio)}`;
+      },
+    },
+    grid: { top: 20, right: 20, bottom: 24, left: 60 },
+    xAxis: {
+      type: 'category',
+      data: songCountDistribution.map((d) => d.range),
+      axisLine: { lineStyle: { color: '#d9d9d9' } },
+      axisLabel: { fontSize: 11, color: '#8c8c8c' },
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: (v: number) => v >= 10000 ? (v / 10000).toFixed(0) + 'w' : String(v),
+      },
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
+    },
+    series: [{
+      type: 'bar',
+      data: songCountDistribution.map((d, i) => ({
+        value: d.count,
+        ratio: d.ratio,
+        itemStyle: {
+          color: i === 0 ? '#E53E3E' : ['#ED8936', '#ECC94B', '#48BB78', '#3182CE'][i - 1],
+        },
+      })),
+      barMaxWidth: 50,
+      label: {
+        show: true,
+        position: 'top',
+        formatter: (params: { data: { ratio: number } }) => formatPercent(params.data.ratio),
+        fontSize: 11,
+        color: '#595959',
+      },
+    }],
+  };
+
+  return (
+    <div className={styles.moduleCard}>
+      <div className={styles.moduleTitle}>点歌数量分布</div>
+      <ReactEChartsCore
+        echarts={echarts}
+        option={barOption}
+        style={{ height: 280 }}
+        opts={{ renderer: 'canvas' }}
+        notMerge
+      />
+      <div className={`${styles.insightBox} ${styles.warning}`}>
+        <span className={styles.insightLabel}>洞察：</span>
+        0 首用户（零点歌）占比 35.2%，是最大群体。1-3 首用户占 24.0%，属于轻度参与。
+        7 首以上的深度用户仅占 23.8%，但贡献了主要付费转化。
+        建议针对 0 首和 1-3 首用户优化引导，提升参与深度。
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   模块 F：点歌入口 Top10
+   ============================================================ */
+function SongEntryTop10Module() {
+  const barOption: echarts.EChartsCoreOption = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(255,255,255,0.96)',
+      borderColor: '#e8e8e8',
+      textStyle: { color: '#333', fontSize: 12 },
+      formatter: (params: { name: string; value: number; data: { ratio: number; changeRate: number } }[]) => {
+        const p = params[0];
+        return `${p.name}<br/>点歌数：${formatNumber(p.value)}<br/>占比：${formatPercent(p.data.ratio)}<br/>环比：${formatRate(p.data.changeRate)}`;
+      },
+    },
+    grid: { top: 10, right: 80, bottom: 10, left: 100 },
+    xAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: (v: number) => v >= 10000 ? (v / 10000).toFixed(0) + 'w' : String(v),
+        fontSize: 11,
+      },
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
+    },
+    yAxis: {
+      type: 'category',
+      data: songEntryTop10.map((d) => d.entry).reverse(),
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { fontSize: 11, color: '#4a5568' },
+    },
+    series: [{
+      type: 'bar',
+      data: songEntryTop10.map((d) => ({
+        value: d.count,
+        ratio: d.ratio,
+        changeRate: d.changeRate,
+      })).reverse(),
+      barMaxWidth: 20,
+      itemStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+          { offset: 0, color: '#3182CE' },
+          { offset: 1, color: '#63B3ED' },
+        ]),
+        borderRadius: [0, 4, 4, 0],
+      },
+      label: {
+        show: true,
+        position: 'right',
+        formatter: (params: { data: { ratio: number } }) => formatPercent(params.data.ratio),
+        fontSize: 11,
+        color: '#595959',
+      },
+    }],
+  };
+
+  return (
+    <div className={styles.moduleCard}>
+      <div className={styles.moduleTitle}>点歌入口 Top10</div>
+      <ReactEChartsCore
+        echarts={echarts}
+        option={barOption}
+        style={{ height: 380 }}
+        opts={{ renderer: 'canvas' }}
+        notMerge
+      />
+      <div className={styles.insightBox}>
+        <span className={styles.insightLabel}>洞察：</span>
+        搜索结果页贡献 41.2% 的点歌量，是绝对主入口，说明搜索推荐算法是优化重点。
+        推荐歌单占 18.0% 且环比增长 8%，AI 推荐虽然占比仅 1.0% 但增速最快（+45%），值得持续投入。
+        最近播放下降 5%，可能与新用户占比上升有关。
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   模块 G：异常定位链路
    ============================================================ */
 function AnomalyModule() {
   return (

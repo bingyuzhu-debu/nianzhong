@@ -323,3 +323,17 @@ export const segmentAnomalyTree: SegmentAnomalyNode = {
     },
   ],
 };
+
+// ============ VIP 到期预警 ============
+export interface VipExpiryWarning {
+  period: string;
+  count: number;
+  estimatedRevenueLoss: number;
+}
+
+export const vipExpiryWarningData: VipExpiryWarning[] = [
+  { period: '7天内到期', count: 33954, estimatedRevenueLoss: 678000 },
+  { period: '30天内到期', count: 51213, estimatedRevenueLoss: 1024000 },
+  { period: '已过期0-7天', count: 18230, estimatedRevenueLoss: 365000 },
+  { period: '已过期7-30天', count: 24150, estimatedRevenueLoss: 483000 },
+];

@@ -4,11 +4,12 @@ import { Select } from 'antd';
 import { InfoCircleOutlined, AlertOutlined, WarningOutlined } from '@ant-design/icons';
 import ReactEChartsCore from 'echarts-for-react/lib/core';
 import * as echarts from 'echarts/core';
-import { LineChart, BarChart, PieChart, ScatterChart } from 'echarts/charts';
+import { LineChart, BarChart, PieChart, ScatterChart, HeatmapChart } from 'echarts/charts';
 import {
   GridComponent,
   TooltipComponent,
   LegendComponent,
+  VisualMapComponent,
 } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import KpiCard from '../../components/KpiCard';
@@ -26,6 +27,8 @@ import {
   refundPackageData,
   revenueAnomalyTree,
   PAYMENT_CHANNELS,
+  paymentHourData,
+  conversionTouchpoints,
 } from '../../mock';
 import type {
   RevenueUserType,
@@ -38,8 +41,8 @@ import { formatNumber, formatPercent, formatCurrency, formatRate } from '../../u
 import styles from './index.module.css';
 
 echarts.use([
-  LineChart, BarChart, PieChart, ScatterChart,
-  GridComponent, TooltipComponent, LegendComponent,
+  LineChart, BarChart, PieChart, ScatterChart, HeatmapChart,
+  GridComponent, TooltipComponent, LegendComponent, VisualMapComponent,
   CanvasRenderer,
 ]);
 
@@ -138,10 +141,16 @@ export default function RevenueStructure() {
       {/* 模块D：支付入口效率 */}
       <PaymentChannelModule payChannel={payChannel} />
 
-      {/* 模块E：退款分析 */}
+      {/* 模块E：付费时段热力图 */}
+      <PaymentHeatmapModule />
+
+      {/* 模块F：转化触点分析 */}
+      <ConversionTouchpointModule />
+
+      {/* 模块G：退款分析 */}
       <RefundModule />
 
-      {/* 模块F：异常定位链路 */}
+      {/* 模块H：异常定位链路 */}
       <AnomalyModule />
     </div>
   );
@@ -635,7 +644,171 @@ function PaymentChannelModule({ payChannel }: { payChannel: PaymentChannel }) {
 }
 
 /* ============================================================
-   模块 E：退款分析
+   模块 E：付费时段热力图
+   ============================================================ */
+function PaymentHeatmapModule() {
+  const hours = Array.from({ length: 24 }, (_, i) => `${i}时`);
+  const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  const maxCount = Math.max(...paymentHourData.map(d => d.count));
+
+  const heatmapOption: echarts.EChartsCoreOption = {
+    tooltip: {
+      position: 'top',
+      formatter: (params: { value: [number, number, number] }) => {
+        const [hour, day, count] = params.value;
+        return `${days[day]} ${hour}:00<br/>付费笔数：${formatNumber(count)}`;
+      },
+    },
+    grid: { top: 10, right: 60, bottom: 40, left: 60 },
+    xAxis: {
+      type: 'category',
+      data: hours,
+      axisLabel: { fontSize: 10, color: '#8c8c8c', interval: 1 },
+      splitArea: { show: true },
+    },
+    yAxis: {
+      type: 'category',
+      data: days,
+      axisLabel: { fontSize: 11, color: '#4a5568' },
+      splitArea: { show: true },
+    },
+    visualMap: {
+      min: 0,
+      max: maxCount,
+      calculable: true,
+      orient: 'vertical',
+      right: 0,
+      top: 'center',
+      itemHeight: 120,
+      textStyle: { fontSize: 10 },
+      inRange: {
+        color: ['#ebf8ff', '#bee3f8', '#90cdf4', '#63b3ed', '#4299e1', '#3182ce', '#2b6cb0', '#2c5282'],
+      },
+    },
+    series: [{
+      type: 'heatmap',
+      data: paymentHourData.map(d => [d.hour, d.dayOfWeek, d.count]),
+      label: { show: false },
+      emphasis: {
+        itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.3)' },
+      },
+    }],
+  };
+
+  return (
+    <div className={styles.moduleCard}>
+      <div className={styles.moduleTitle}>付费时段热力图</div>
+      <ReactEChartsCore
+        echarts={echarts}
+        option={heatmapOption}
+        style={{ height: 280 }}
+        opts={{ renderer: 'canvas' }}
+        notMerge
+      />
+      <div className={styles.insightBox}>
+        <span className={styles.insightLabel}>洞察：</span>
+        付费高峰集中在 20:00-23:00，贡献全天约 55% 的付费笔数。周末整体付费量比工作日高 40%。
+        凌晨 0:00-2:00 有一个小高峰（夜场场景），建议在该时段增加限时优惠推送。
+        上午 4:00-9:00 是付费低谷，可考虑减少此时段的广告投放以降低打扰。
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   模块 F：转化触点分析
+   ============================================================ */
+function ConversionTouchpointModule() {
+  const barOption: echarts.EChartsCoreOption = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(255,255,255,0.96)',
+      borderColor: '#e8e8e8',
+      textStyle: { color: '#333', fontSize: 12 },
+    },
+    legend: { top: 0, right: 0, textStyle: { fontSize: 12 } },
+    grid: { top: 36, right: 20, bottom: 24, left: 120 },
+    xAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
+    },
+    yAxis: {
+      type: 'category',
+      data: conversionTouchpoints.map(d => d.touchpoint).reverse(),
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { fontSize: 11, color: '#4a5568' },
+    },
+    series: [
+      {
+        name: '转化率',
+        type: 'bar',
+        data: conversionTouchpoints.map(d => d.conversionRate).reverse(),
+        barMaxWidth: 16,
+        itemStyle: { color: '#3182CE', borderRadius: [0, 4, 4, 0] },
+        label: {
+          show: true,
+          position: 'right',
+          formatter: (params: { value: number }) => formatPercent(params.value),
+          fontSize: 10,
+          color: '#595959',
+        },
+      },
+    ],
+  };
+
+  return (
+    <div className={styles.moduleCard}>
+      <div className={styles.moduleTitle}>转化触点分析</div>
+      <div className={styles.dualChart}>
+        <div>
+          <table className={styles.dataTable}>
+            <thead>
+              <tr>
+                <th>触点</th>
+                <th className={styles.numCell}>曝光</th>
+                <th className={styles.numCell}>转化率</th>
+                <th className={styles.numCell}>收入</th>
+                <th className={styles.numCell}>占比</th>
+              </tr>
+            </thead>
+            <tbody>
+              {conversionTouchpoints.map((row) => (
+                <tr key={row.touchpoint}>
+                  <td>{row.touchpoint}</td>
+                  <td className={styles.numCell}>{formatNumber(row.impressions)}</td>
+                  <td className={styles.numCell}>{formatPercent(row.conversionRate)}</td>
+                  <td className={styles.numCell}>{formatCurrency(row.revenue)}</td>
+                  <td className={styles.numCell}>{formatPercent(row.revenueShare)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div className={styles.chartSubTitle}>各触点转化率对比</div>
+          <ReactEChartsCore
+            echarts={echarts}
+            option={barOption}
+            style={{ height: 260 }}
+            opts={{ renderer: 'canvas' }}
+            notMerge
+          />
+        </div>
+      </div>
+      <div className={styles.insightBox}>
+        <span className={styles.insightLabel}>洞察：</span>
+        商品详情页转化率最高（6.0%），但曝光量有限。开屏弹窗和歌曲结束弹窗是收入贡献最大的两个触点（合计 59%），
+        说明「被动弹窗」仍是主要转化方式。消息推送转化率最低（1.0%），投入产出比需要评估。
+        个人中心入口转化率 3.0%，作为主动入口表现一般，建议优化入口可见度。
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   模块 G：退款分析
    ============================================================ */
 function RefundModule() {
   const lineOption: echarts.EChartsCoreOption = {
@@ -762,7 +935,7 @@ function RefundModule() {
 }
 
 /* ============================================================
-   模块 F：异常定位链路
+   模块 H：异常定位链路
    ============================================================ */
 function AnomalyModule() {
   return (

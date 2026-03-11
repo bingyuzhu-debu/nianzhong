@@ -1,5 +1,17 @@
 export { kpiData, revenueTrendData, alertData, radarData } from './dashboard';
 export {
+  diagnosisFactors,
+  diagnosisConclusion,
+  targetAchievementData,
+  avgSongsPerUserKpi,
+} from './dashboard';
+export type {
+  FactorStatus,
+  DiagnosisFactor,
+  DiagnosisConclusion,
+  TargetAchievement,
+} from './dashboard';
+export {
   deviceKpiData,
   deviceTrendData,
   boxTypeData,
@@ -28,6 +40,14 @@ export type {
   FunnelTrendPoint,
   ZeroSongProfile,
   FunnelAnomalyNode,
+} from './userFunnel';
+export {
+  songCountDistribution,
+  songEntryTop10,
+} from './userFunnel';
+export type {
+  SongCountBucket,
+  SongEntrySource,
 } from './userFunnel';
 export {
   revenueKpiData,
@@ -59,6 +79,14 @@ export type {
   RevenueAnomalyNode,
 } from './revenueStructure';
 export {
+  paymentHourData,
+  conversionTouchpoints,
+} from './revenueStructure';
+export type {
+  PaymentHourData,
+  ConversionTouchpoint,
+} from './revenueStructure';
+export {
   segmentKpiData,
   segmentTrendData,
   renewalTrendData,
@@ -76,6 +104,12 @@ export type {
   SegmentAnomalyNode,
 } from './userSegmentation';
 export {
+  vipExpiryWarningData,
+} from './userSegmentation';
+export type {
+  VipExpiryWarning,
+} from './userSegmentation';
+export {
   adPlacements,
   adKpiData,
   AD_PATH_GROUPS,
@@ -85,6 +119,15 @@ export {
   adAnomalyTree,
 } from './adEfficiency';
 export type {
+  AdPlacement,
   AdPathGroup,
   AdAnomalyNode,
+} from './adEfficiency';
+export {
+  arpuByStore,
+  arpuByRegion,
+  arpuByDeviceType,
+} from './adEfficiency';
+export type {
+  ArpuAttribution,
 } from './adEfficiency';

@@ -1,4 +1,4 @@
-import { DatePicker, Radio, Switch, Space } from 'antd';
+import { DatePicker, Radio, Switch, Space, Select } from 'antd';
 import type { FilterState, TimeGranularity } from '../../types';
 import dayjs from 'dayjs';
 import styles from './index.module.css';
@@ -60,6 +60,22 @@ export default function GlobalFilter({ filter, onChange }: GlobalFilterProps) {
             size="small"
             checked={filter.compareMode}
             onChange={(checked) => onChange({ ...filter, compareMode: checked })}
+          />
+        </Space>
+        <Space size="small">
+          <span className={styles.label}>KTV类型</span>
+          <Select
+            size="small"
+            value={filter.ktvType}
+            onChange={(v) => onChange({ ...filter, ktvType: v })}
+            style={{ width: 120 }}
+            options={[
+              { label: '全部', value: '全部' },
+              { label: '量贩', value: '量贩' },
+              { label: '雷客', value: '雷客' },
+              { label: '夜总会', value: '夜总会' },
+              { label: '酒吧', value: '酒吧' },
+            ]}
           />
         </Space>
       </Space>

@@ -24,6 +24,7 @@ import {
   ltvCohortData,
   segmentAnomalyTree,
   SEGMENT_TYPES,
+  vipExpiryWarningData,
 } from '../../mock';
 import type { SegmentType, SegmentAnomalyNode } from '../../mock';
 import type { FilterState } from '../../types';
@@ -110,6 +111,9 @@ export default function UserSegmentation() {
 
       {/* 模块B：续费率 & 过期分析 */}
       <RenewalModule />
+
+      {/* 模块B.5：VIP 到期预警 */}
+      <VipExpiryWarningModule />
 
       {/* 模块C：过期用户召回分析 */}
       <RecallModule />
@@ -362,6 +366,54 @@ function RenewalModule() {
         续费率从 52% 持续下降至 46.8%（环比 -8%），已触发预警阈值。
         过期时长分布显示 0-7 天占比最大（28%），但 30-60 天和 60 天+ 合计占比达 27%，
         说明长期过期用户堆积严重。建议在 VIP 到期前 7 天推送续费提醒，而非到期后才触达。
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   模块 B.5：VIP 到期预警
+   ============================================================ */
+function VipExpiryWarningModule() {
+  const total7d = vipExpiryWarningData.find(d => d.period === '7天内到期')!;
+  const total30d = vipExpiryWarningData.find(d => d.period === '30天内到期')!;
+
+  return (
+    <div className={styles.moduleCard}>
+      <div className={styles.moduleTitle} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <AlertOutlined style={{ color: '#ED8936' }} />
+        VIP 到期预警
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+        {vipExpiryWarningData.map((item) => {
+          const isExpired = item.period.includes('已过期');
+          return (
+            <div
+              key={item.period}
+              style={{
+                background: isExpired ? '#fff5f5' : '#fffff0',
+                border: `1px solid ${isExpired ? '#fed7d7' : '#fefcbf'}`,
+                borderRadius: 8,
+                padding: '12px 16px',
+              }}
+            >
+              <div style={{ fontSize: 12, color: '#718096', marginBottom: 4 }}>{item.period}</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: isExpired ? '#E53E3E' : '#D69E2E' }}>
+                {formatNumber(item.count)}
+              </div>
+              <div style={{ fontSize: 11, color: '#a0aec0', marginTop: 4 }}>
+                预估流失 ¥{(item.estimatedRevenueLoss / 10000).toFixed(1)}万
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className={`${styles.insightBox} ${styles.warning}`}>
+        <span className={styles.insightLabel}>预警：</span>
+        未来 7 天内将有 <strong>{formatNumber(total7d.count)}</strong> 个 VIP 到期，
+        30 天内共 <strong>{formatNumber(total30d.count)}</strong> 个。
+        按当前续费率 42%，预估将流失约 ¥{((total30d.estimatedRevenueLoss * 0.58) / 10000).toFixed(0)}万 收入。
+        建议在到期前 3-7 天启动多渠道续费提醒（弹窗 + 消息推送），并为即将到期用户提供续费优惠。
       </div>
     </div>
   );

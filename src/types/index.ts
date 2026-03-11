@@ -2,6 +2,7 @@ export type TrendDirection = 'up' | 'down' | 'flat';
 export type Polarity = 'positive' | 'negative' | 'neutral';
 export type AlertLevel = 'critical' | 'warning' | 'normal';
 export type TimeGranularity = 'day' | 'week' | 'month';
+export type KtvType = '全部' | '量贩' | '雷客' | '夜总会' | '酒吧';
 
 export interface KpiData {
   key: string;
@@ -47,4 +48,5 @@ export interface FilterState {
   dateRange: [string, string];
   granularity: TimeGranularity;
   compareMode: boolean;
+  ktvType: KtvType;
 }

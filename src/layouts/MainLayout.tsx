@@ -3,9 +3,8 @@ import { Layout, Menu } from 'antd';
 import {
   DashboardOutlined,
   HddOutlined,
-  FunnelPlotOutlined,
+  UserOutlined,
   DollarOutlined,
-  TeamOutlined,
   NotificationOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
@@ -18,9 +17,8 @@ const { Sider, Content } = Layout;
 const menuItems = [
   { key: '/', icon: <DashboardOutlined />, label: '驾驶舱' },
   { key: '/device-efficiency', icon: <HddOutlined />, label: '设备效率' },
-  { key: '/user-funnel', icon: <FunnelPlotOutlined />, label: '用户漏斗' },
+  { key: '/user-analysis', icon: <UserOutlined />, label: '用户分析' },
   { key: '/revenue-structure', icon: <DollarOutlined />, label: '营收结构' },
-  { key: '/user-segmentation', icon: <TeamOutlined />, label: '用户分层' },
   { key: '/ad-efficiency', icon: <NotificationOutlined />, label: '广告位效率' },
 ];
 
@@ -32,6 +30,7 @@ export default function MainLayout() {
     dateRange: [dayjs().subtract(6, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
     granularity: 'day',
     compareMode: false,
+    ktvType: '全部',
   });
 
   return (

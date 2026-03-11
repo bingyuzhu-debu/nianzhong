@@ -294,3 +294,39 @@ export const funnelAnomalyTree: FunnelAnomalyNode = {
     },
   ],
 };
+
+// ============ 点歌数量分布 ============
+export interface SongCountBucket {
+  range: string;
+  count: number;
+  ratio: number;
+}
+
+export const songCountDistribution: SongCountBucket[] = [
+  { range: '0首', count: 451598, ratio: 0.352 },
+  { range: '1-3首', count: 307896, ratio: 0.240 },
+  { range: '4-6首', count: 217574, ratio: 0.170 },
+  { range: '7-10首', count: 166920, ratio: 0.130 },
+  { range: '10+首', count: 139412, ratio: 0.108 },
+];
+
+// ============ 点歌入口 Top10 ============
+export interface SongEntrySource {
+  entry: string;
+  count: number;
+  ratio: number;
+  changeRate: number;
+}
+
+export const songEntryTop10: SongEntrySource[] = [
+  { entry: '搜索结果页', count: 523400, ratio: 0.412, changeRate: 0.03 },
+  { entry: '推荐歌单', count: 228500, ratio: 0.180, changeRate: 0.08 },
+  { entry: '排行榜', count: 165200, ratio: 0.130, changeRate: -0.02 },
+  { entry: '歌手页', count: 114100, ratio: 0.090, changeRate: 0.01 },
+  { entry: '最近播放', count: 88900, ratio: 0.070, changeRate: -0.05 },
+  { entry: '扫码直达', count: 63500, ratio: 0.050, changeRate: 0.12 },
+  { entry: '分类浏览', count: 38100, ratio: 0.030, changeRate: -0.03 },
+  { entry: '好友推荐', count: 19050, ratio: 0.015, changeRate: 0.25 },
+  { entry: 'AI推荐', count: 12700, ratio: 0.010, changeRate: 0.45 },
+  { entry: '其他', count: 16350, ratio: 0.013, changeRate: -0.01 },
+];
