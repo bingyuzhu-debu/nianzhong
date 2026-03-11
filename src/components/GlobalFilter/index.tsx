@@ -1,5 +1,5 @@
-import { DatePicker, Radio, Switch, Space, Select } from 'antd';
-import type { FilterState, TimeGranularity } from '../../types';
+import { DatePicker, Switch, Space, Select } from 'antd';
+import type { FilterState } from '../../types';
 import dayjs from 'dayjs';
 import styles from './index.module.css';
 
@@ -37,21 +37,6 @@ export default function GlobalFilter({ filter, onChange }: GlobalFilterProps) {
                 });
               }
             }}
-          />
-        </Space>
-        <Space size="small">
-          <span className={styles.label}>时间粒度</span>
-          <Radio.Group
-            size="small"
-            value={filter.granularity}
-            onChange={(e) => onChange({ ...filter, granularity: e.target.value as TimeGranularity })}
-            optionType="button"
-            buttonStyle="solid"
-            options={[
-              { label: '日', value: 'day' },
-              { label: '周', value: 'week' },
-              { label: '月', value: 'month' },
-            ]}
           />
         </Space>
         <Space size="small">

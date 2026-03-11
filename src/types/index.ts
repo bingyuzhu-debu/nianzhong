@@ -46,7 +46,6 @@ export interface RadarDimension {
 
 export interface FilterState {
   dateRange: [string, string];
-  granularity: TimeGranularity;
   compareMode: boolean;
   ktvType: KtvType;
 }

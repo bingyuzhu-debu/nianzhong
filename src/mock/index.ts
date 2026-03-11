@@ -3,13 +3,16 @@ export {
   diagnosisFactors,
   diagnosisConclusion,
   targetAchievementData,
-  avgSongsPerUserKpi,
+  targetTrendData,
+  monthCumulativeData,
 } from './dashboard';
 export type {
   FactorStatus,
   DiagnosisFactor,
   DiagnosisConclusion,
   TargetAchievement,
+  TargetTrendPoint,
+  MonthCumulativePoint,
 } from './dashboard';
 export {
   deviceKpiData,

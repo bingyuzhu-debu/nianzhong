@@ -98,68 +98,20 @@ export const kpiData: KpiData[] = [
     linkedPath: '/user-analysis',
   },
   {
-    key: 'renewalRate',
-    name: '续费率',
-    value: 0.42,
-    unit: '',
-    format: 'percent',
+    key: 'revenuePerBox',
+    name: '单盒子日收入',
+    value: 31.3,
+    unit: '元',
+    format: 'currency',
     polarity: 'positive',
-    trend: 'down',
-    changeRate: -0.03,
-    momRate: -0.03,
-    yoyRate: -0.01,
-    sparkline: [0.44, 0.43, 0.43, 0.43, 0.42, 0.42, 0.42],
-    definition: 'VIP到期后30天内续费用户数 / 同期VIP到期用户数 × 100%',
-    linkedDimension: '用户分析',
-    linkedPath: '/user-analysis',
-  },
-  {
-    key: 'refundRate',
-    name: '退款率',
-    value: 0.032,
-    unit: '',
-    format: 'percent',
-    polarity: 'negative',
     trend: 'up',
-    changeRate: 0.15,
-    momRate: 0.15,
+    changeRate: 0.05,
+    momRate: 0.05,
     yoyRate: 0.08,
-    sparkline: [0.025, 0.026, 0.027, 0.028, 0.029, 0.031, 0.032],
-    definition: '退款订单数 / 总订单数 × 100%',
-    linkedDimension: '营收结构',
-    linkedPath: '/revenue-structure',
-  },
-  {
-    key: 'arpu',
-    name: 'ARPU',
-    value: 1.12,
-    unit: '元',
-    format: 'currency',
-    polarity: 'positive',
-    trend: 'down',
-    changeRate: -0.09,
-    momRate: -0.09,
-    yoyRate: -0.05,
-    sparkline: [1.25, 1.22, 1.20, 1.18, 1.15, 1.13, 1.12],
-    definition: '总收入 / 扫码UV',
-    linkedDimension: '广告位效率',
-    linkedPath: '/ad-efficiency',
-  },
-  {
-    key: 'ltv',
-    name: 'LTV',
-    value: 68.5,
-    unit: '元',
-    format: 'currency',
-    polarity: 'positive',
-    trend: 'up',
-    changeRate: 0.06,
-    momRate: 0.06,
-    yoyRate: 0.18,
-    sparkline: [62.0, 63.5, 64.8, 65.5, 66.8, 67.5, 68.5],
-    definition: '用户从首次付费到最后一次付费的累计金额均值（按用户队列统计）',
-    linkedDimension: '用户分析',
-    linkedPath: '/user-analysis',
+    sparkline: [28.5, 29.2, 29.8, 30.1, 30.6, 31.0, 31.3],
+    definition: '总收入 / 有效盒子数 / 统计天数',
+    linkedDimension: '设备效率',
+    linkedPath: '/device-efficiency',
   },
 ];
 
@@ -338,32 +290,101 @@ export const diagnosisConclusion: DiagnosisConclusion = {
 // ============ 目标达成率数据 ============
 export interface TargetAchievement {
   period: string;
+  periodKey: string;
   target: number;
   actual: number;
   rate: number;
+  prevActual: number;
+  prevRate: number;
 }
 
 export const targetAchievementData: TargetAchievement[] = [
-  { period: '日', target: 50000, actual: 47843, rate: 0.957 },
-  { period: '周', target: 350000, actual: 328500, rate: 0.939 },
-  { period: '月', target: 1500000, actual: 1435280, rate: 0.957 },
-  { period: '年', target: 18000000, actual: 14352800, rate: 0.798 },
+  { period: '今日', periodKey: 'today', target: 50000, actual: 47843, rate: 0.957, prevActual: 46200, prevRate: 0.924 },
+  { period: '昨天', periodKey: 'yesterday', target: 50000, actual: 46200, rate: 0.924, prevActual: 48100, prevRate: 0.962 },
+  { period: '本周', periodKey: 'thisWeek', target: 350000, actual: 328500, rate: 0.939, prevActual: 315000, prevRate: 0.900 },
+  { period: '上周', periodKey: 'lastWeek', target: 350000, actual: 341200, rate: 0.975, prevActual: 330000, prevRate: 0.943 },
+  { period: '本月', periodKey: 'thisMonth', target: 1500000, actual: 1435280, rate: 0.957, prevActual: 1380000, prevRate: 0.920 },
+  { period: '上月', periodKey: 'lastMonth', target: 1500000, actual: 1482000, rate: 0.988, prevActual: 1410000, prevRate: 0.940 },
 ];
 
-// ============ 人均点歌 KPI ============
-export const avgSongsPerUserKpi: KpiData = {
-  key: 'avgSongsPerUser',
-  name: '人均点歌数',
-  value: 3.8,
-  unit: '首',
-  format: 'number',
-  polarity: 'positive',
-  trend: 'down',
-  changeRate: -0.05,
-  momRate: -0.05,
-  yoyRate: 0.02,
-  sparkline: [4.2, 4.1, 4.0, 3.9, 3.9, 3.8, 3.8],
-  definition: '点歌总数 / 扫码UV',
-  linkedDimension: '用户分析',
-  linkedPath: '/user-analysis',
-};
+// ============ 目标达成趋势数据（近30天日维度） ============
+export interface TargetTrendPoint {
+  date: string;
+  actual: number;
+  target: number;
+  predicted?: number;
+}
+
+function generateTargetTrend(): TargetTrendPoint[] {
+  const data: TargetTrendPoint[] = [];
+  const baseDate = new Date('2026-02-10');
+  const dailyTarget = 50000;
+
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(baseDate);
+    date.setDate(date.getDate() + i);
+    const dayOfWeek = date.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const factor = isWeekend ? 1.2 + Math.random() * 0.15 : 0.85 + Math.random() * 0.25;
+    const actual = Math.round(dailyTarget * factor);
+    data.push({
+      date: `${date.getMonth() + 1}/${date.getDate()}`,
+      actual,
+      target: dailyTarget,
+    });
+  }
+
+  // Add 7 days of predicted data
+  const lastDate = new Date('2026-03-12');
+  const recentAvg = data.slice(-7).reduce((s, d) => s + d.actual, 0) / 7;
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(lastDate);
+    date.setDate(date.getDate() + i);
+    const dayOfWeek = date.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const factor = isWeekend ? 1.15 : 0.95;
+    data.push({
+      date: `${date.getMonth() + 1}/${date.getDate()}`,
+      actual: 0,
+      target: dailyTarget,
+      predicted: Math.round(recentAvg * factor),
+    });
+  }
+
+  return data;
+}
+
+export const targetTrendData: TargetTrendPoint[] = generateTargetTrend();
+
+// ============ 月度累计趋势（用于预测模块） ============
+export interface MonthCumulativePoint {
+  day: number;
+  cumActual: number;
+  cumTarget: number;
+  cumPredicted?: number;
+}
+
+function generateMonthCumulative(): MonthCumulativePoint[] {
+  const data: MonthCumulativePoint[] = [];
+  const dailyTarget = 50000;
+  let cumActual = 0;
+  let cumTarget = 0;
+  const today = 11; // March 11
+
+  for (let d = 1; d <= 31; d++) {
+    cumTarget += dailyTarget;
+    if (d <= today) {
+      const factor = 0.85 + Math.random() * 0.3;
+      cumActual += Math.round(dailyTarget * factor);
+      data.push({ day: d, cumActual, cumTarget });
+    } else {
+      // Predicted: average of actual daily so far
+      const avgDaily = cumActual / today;
+      const projectedCum = cumActual + avgDaily * (d - today);
+      data.push({ day: d, cumActual: 0, cumTarget, cumPredicted: Math.round(projectedCum) });
+    }
+  }
+  return data;
+}
+
+export const monthCumulativeData: MonthCumulativePoint[] = generateMonthCumulative();

@@ -28,7 +28,6 @@ export default function MainLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [filter, setFilter] = useState<FilterState>({
     dateRange: [dayjs().subtract(6, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
-    granularity: 'day',
     compareMode: false,
     ktvType: '全部',
   });
